@@ -14,8 +14,9 @@
     "typescript": "^3.3.3333"
   },
   "scripts": {
+    "build": "run-p build:**",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build:app": "react-scripts build",
     "test": "react-scripts test",
     "cypress": "cypress open",
     "start:lambda": "netlify-lambda serve src/lambda",
@@ -32,6 +33,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "babel-loader": "^8.0.5"
+    "babel-loader": "^8.0.5",
+    "npm-run-all": "^4.1.5"
   }
 }
