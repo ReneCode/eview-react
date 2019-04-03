@@ -87,8 +87,8 @@ class Graphic extends Component<IProps> {
     return (
       <svg
         ref={this.svgRef}
-        width="800"
-        height="600"
+        width="700"
+        height="500"
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}

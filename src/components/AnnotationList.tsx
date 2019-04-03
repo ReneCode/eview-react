@@ -12,7 +12,7 @@ interface IProps {
 const AnnotationList = (props: IProps) => {
   return (
     <div>
-      <h3>List of Annotations</h3>
+      <h3>List of Annotations (select to activate)</h3>
       <ol>
         {props.annotations.map(annotation => {
           let className = "annotationItem";
