@@ -1,29 +1,25 @@
-import React, { Component, RefObject } from "react";
+import React, { Component } from "react";
+import { Annotation } from "../models/annotation";
+import { Line } from "../models/Line";
 
 type Point = {
   x: number;
   y: number;
 };
 
-class Line {
-  constructor(
-    public x1: number,
-    public y1: number,
-    public x2: number,
-    public y2: number
-  ) {}
-}
-
 type State = {
-  lines: Line[];
   newLine: Line | null;
 };
 
-class Graphic extends Component {
+interface IProps {
+  annotations: Annotation[];
+  onCreateLine(line: Line): void;
+}
+
+class Graphic extends Component<IProps> {
   svgRef: any;
   svgDelta: Point = { x: 0, y: 0 };
   state: State = {
-    lines: [],
     newLine: null
   };
 
@@ -67,9 +63,9 @@ class Graphic extends Component {
     const newLine = new Line(oldLine.x1, oldLine.y1, pt.x, pt.y);
 
     this.setState({
-      newLine: null,
-      lines: this.state.lines.concat(newLine)
+      newLine: null
     });
+    this.props.onCreateLine(newLine);
   };
 
   getSvgPoint(ev: React.MouseEvent): Point {
@@ -87,6 +83,7 @@ class Graphic extends Component {
         <line x1={nl.x1} y1={nl.y1} x2={nl.x2} y2={nl.y2} stroke="blue" />
       );
     }
+    console.log(":", this.props.annotations);
     return (
       <svg
         ref={this.svgRef}
@@ -96,17 +93,19 @@ class Graphic extends Component {
         onMouseMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
       >
-        {this.state.lines.map((l, idx) => {
-          return (
-            <line
-              key={idx}
-              x1={l.x1}
-              y1={l.y1}
-              x2={l.x2}
-              y2={l.y2}
-              stroke="black"
-            />
-          );
+        {this.props.annotations.map((annotation, aIdx) => {
+          return annotation.lines.map((l, lIdx) => {
+            return (
+              <line
+                key={`${aIdx}-${lIdx}`}
+                x1={l.x1}
+                y1={l.y1}
+                x2={l.x2}
+                y2={l.y2}
+                stroke="black"
+              />
+            );
+          });
         })}
         {newLine}
       </svg>

@@ -1,0 +1,19 @@
+.annotationItem {
+  padding: 6px;
+  margin: 2px;
+  background-color: lightgray;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+.annotationItem:hover {
+  background-color: darkgrey;
+}
+
+.annotationItem--selected {
+  background-color: lightskyblue;
+}
+
+.annotationItem--selected:hover {
+  background-color: rgb(65, 172, 238);
+}
