@@ -69,7 +69,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="ged">
-          <h4>draw Line with: Mouse down, mouse move, mouse up</h4>
+          <h4>create lines (mouse down, mouse move, mouse up)</h4>
           <Graphic
             annotations={this.state.annotations}
             onCreateLine={this.onCreateLine}
