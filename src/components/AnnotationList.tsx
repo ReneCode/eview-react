@@ -14,13 +14,14 @@ const AnnotationList = (props: IProps) => {
     <div>
       <h3>List of Annotations (select to activate)</h3>
       <ol>
-        {props.annotations.map(annotation => {
+        {props.annotations.map((annotation, idx) => {
           let className = "annotationItem";
           if (annotation == props.selectedAnnotation) {
             className += " annotationItem--selected";
           }
           return (
             <li
+              key={idx}
               className={className}
               onClick={() => props.onClickAnnotation(annotation)}
             >

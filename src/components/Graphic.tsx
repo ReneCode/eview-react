@@ -36,44 +36,36 @@ class Graphic extends Component<IProps> {
     }
   }
 
-  // onTouchStart = (ev: React.TouchEvent) => {
-  //   if (ev.touches.length > 0) {
-  //     ev.stopPropagation();
-  //     ev.preventDefault();
-  //     this.onPointer_Down(ev.touches[0].clientX, ev.touches[0].clientY);
-  //   }
-  // };
-  // onMouseDown = (ev: React.MouseEvent) => {
-  //   this.onPointer_Down(ev.clientX, ev.clientY);
-  // };
-  // onPointerDown = (ev: React.PointerEvent) => {
-  //   console.log("::", ev.clientX);
-  //   this.onPointer_Down(ev.clientX, ev.clientY);
-  // };
-  // onPointer_Down = (clientX: number, clientY: number) => {
-
-  onPointerDown = (ev: React.PointerEvent) => {
-    const pt = this.getSvgPoint(ev.clientX, ev.clientY);
+  onTouchStart = (ev: React.TouchEvent) => {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (ev.touches.length > 0) {
+      this.onPointerDown(ev.touches[0].clientX, ev.touches[0].clientY);
+    }
+  };
+  onMouseDown = (ev: React.MouseEvent) => {
+    this.onPointerDown(ev.clientX, ev.clientY);
+  };
+  onPointerDown = (clientX: number, clientY: number) => {
+    const pt = this.getSvgPoint(clientX, clientY);
     const newLine = new Line(pt.x, pt.y, pt.x, pt.y);
     this.setState({
       newLine: newLine
     });
   };
 
-  // onTouchMove = (ev: React.TouchEvent) => {
-  //   if (ev.touches.length > 0) {
-  //     ev.stopPropagation();
-  //     ev.preventDefault();
-  //     this.onPointerMove(ev.touches[0].clientX, ev.touches[0].clientY);
-  //   }
-  // };
-  // onMouseMove = (ev: React.MouseEvent) => {
-  //   this.onPointerMove(ev.clientX, ev.clientY);
-  // };
-  // onPointerMove = (clientX: number, clientY: number) => {
-  onPointerMove = (ev: React.PointerEvent) => {
-    const pt = this.getSvgPoint(ev.clientX, ev.clientY);
-    console.log(":move:", pt);
+  onTouchMove = (ev: React.TouchEvent) => {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (ev.touches.length > 0) {
+      this.onPointerMove(ev.touches[0].clientX, ev.touches[0].clientY);
+    }
+  };
+  onMouseMove = (ev: React.MouseEvent) => {
+    this.onPointerMove(ev.clientX, ev.clientY);
+  };
+  onPointerMove = (clientX: number, clientY: number) => {
+    const pt = this.getSvgPoint(clientX, clientY);
     const oldLine = this.state.newLine;
     if (oldLine) {
       const newLine = new Line(oldLine.x1, oldLine.y1, pt.x, pt.y);
@@ -83,23 +75,25 @@ class Graphic extends Component<IProps> {
     }
   };
 
-  // onTouchEnd = (ev: React.TouchEvent) => {
-  //   if (ev.touches.length > 0) {
-  //     this.onPointerUp(ev.touches[0].clientX, ev.touches[0].clientY);
-  //   }
-  // };
-  // onMouseUp = (ev: React.MouseEvent) => {
-  //   this.onPointerUp(ev.clientX, ev.clientY);
-  // };
-  // onPointerUp = (clientX: number, clientY: number) => {
-  onPointerUp = (ev: React.PointerEvent) => {
+  onTouchEnd = (ev: React.TouchEvent) => {
+    ev.stopPropagation();
+    ev.preventDefault();
+    // touchend event has no touches values
+    this.onPointerUp(null, null);
+  };
+  onMouseUp = (ev: React.MouseEvent) => {
+    this.onPointerUp(ev.clientX, ev.clientY);
+  };
+  onPointerUp = (clientX: number | null, clientY: number | null) => {
     const oldLine = this.state.newLine;
     if (!oldLine) {
       return;
     }
-    const pt = this.getSvgPoint(ev.clientX, ev.clientY);
-    const newLine = new Line(oldLine.x1, oldLine.y1, pt.x, pt.y);
-
+    let newLine = oldLine;
+    if (clientX && clientY) {
+      const pt = this.getSvgPoint(clientX, clientY);
+      newLine = new Line(oldLine.x1, oldLine.y1, pt.x, pt.y);
+    }
     this.setState({
       newLine: null
     });
@@ -121,20 +115,23 @@ class Graphic extends Component<IProps> {
         <line x1={nl.x1} y1={nl.y1} x2={nl.x2} y2={nl.y2} stroke="blue" />
       );
     }
+
+    // https://stackoverflow.com/questions/42101723/unable-to-preventdefault-inside-passive-event-listener
+    const style = {
+      touchAction: "none"
+    };
     return (
       <svg
         ref={this.svgRef}
         width="700"
         height="500"
-        // onMouseDown={this.onMouseDown}
-        // onMouseMove={this.onMouseMove}
-        // onMouseUp={this.onMouseUp}
-        // onTouchStart={this.onTouchStart}
-        // onTouchMove={this.onTouchMove}
-        // onTouchEnd={this.onTouchEnd}
-        onPointerDown={this.onPointerDown}
-        onPointerMove={this.onPointerMove}
-        onPointerUp={this.onPointerUp}
+        onMouseDown={this.onMouseDown}
+        onMouseMove={this.onMouseMove}
+        onMouseUp={this.onMouseUp}
+        onTouchStart={this.onTouchStart}
+        onTouchMove={this.onTouchMove}
+        onTouchEnd={this.onTouchEnd}
+        style={style}
       >
         {this.props.annotations.map((annotation, aIdx) => {
           return annotation.lines.map((l, lIdx) => {
