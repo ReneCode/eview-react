@@ -33,19 +33,47 @@ class Graphic extends Component<IProps> {
     if (this.svgRef) {
       const rect = this.svgRef.current.getBoundingClientRect();
       this.svgDelta = { x: rect.x, y: rect.y };
-      console.log(rect);
     }
   }
 
-  onMouseDown = (ev: React.MouseEvent) => {
-    const pt = this.getSvgPoint(ev);
+  // onTouchStart = (ev: React.TouchEvent) => {
+  //   if (ev.touches.length > 0) {
+  //     ev.stopPropagation();
+  //     ev.preventDefault();
+  //     this.onPointer_Down(ev.touches[0].clientX, ev.touches[0].clientY);
+  //   }
+  // };
+  // onMouseDown = (ev: React.MouseEvent) => {
+  //   this.onPointer_Down(ev.clientX, ev.clientY);
+  // };
+  // onPointerDown = (ev: React.PointerEvent) => {
+  //   console.log("::", ev.clientX);
+  //   this.onPointer_Down(ev.clientX, ev.clientY);
+  // };
+  // onPointer_Down = (clientX: number, clientY: number) => {
+
+  onPointerDown = (ev: React.PointerEvent) => {
+    const pt = this.getSvgPoint(ev.clientX, ev.clientY);
     const newLine = new Line(pt.x, pt.y, pt.x, pt.y);
     this.setState({
       newLine: newLine
     });
   };
-  onMouseMove = (ev: React.MouseEvent) => {
-    const pt = this.getSvgPoint(ev);
+
+  // onTouchMove = (ev: React.TouchEvent) => {
+  //   if (ev.touches.length > 0) {
+  //     ev.stopPropagation();
+  //     ev.preventDefault();
+  //     this.onPointerMove(ev.touches[0].clientX, ev.touches[0].clientY);
+  //   }
+  // };
+  // onMouseMove = (ev: React.MouseEvent) => {
+  //   this.onPointerMove(ev.clientX, ev.clientY);
+  // };
+  // onPointerMove = (clientX: number, clientY: number) => {
+  onPointerMove = (ev: React.PointerEvent) => {
+    const pt = this.getSvgPoint(ev.clientX, ev.clientY);
+    console.log(":move:", pt);
     const oldLine = this.state.newLine;
     if (oldLine) {
       const newLine = new Line(oldLine.x1, oldLine.y1, pt.x, pt.y);
@@ -54,12 +82,22 @@ class Graphic extends Component<IProps> {
       });
     }
   };
-  onMouseUp = (ev: React.MouseEvent) => {
+
+  // onTouchEnd = (ev: React.TouchEvent) => {
+  //   if (ev.touches.length > 0) {
+  //     this.onPointerUp(ev.touches[0].clientX, ev.touches[0].clientY);
+  //   }
+  // };
+  // onMouseUp = (ev: React.MouseEvent) => {
+  //   this.onPointerUp(ev.clientX, ev.clientY);
+  // };
+  // onPointerUp = (clientX: number, clientY: number) => {
+  onPointerUp = (ev: React.PointerEvent) => {
     const oldLine = this.state.newLine;
     if (!oldLine) {
       return;
     }
-    const pt = this.getSvgPoint(ev);
+    const pt = this.getSvgPoint(ev.clientX, ev.clientY);
     const newLine = new Line(oldLine.x1, oldLine.y1, pt.x, pt.y);
 
     this.setState({
@@ -68,10 +106,10 @@ class Graphic extends Component<IProps> {
     this.props.onCreateLine(newLine);
   };
 
-  getSvgPoint(ev: React.MouseEvent): Point {
+  getSvgPoint(clientX: number, clientY: number): Point {
     return {
-      x: ev.clientX - this.svgDelta.x,
-      y: ev.clientY - this.svgDelta.y
+      x: clientX - this.svgDelta.x,
+      y: clientY - this.svgDelta.y
     };
   }
 
@@ -83,15 +121,20 @@ class Graphic extends Component<IProps> {
         <line x1={nl.x1} y1={nl.y1} x2={nl.x2} y2={nl.y2} stroke="blue" />
       );
     }
-    console.log(":", this.props.annotations);
     return (
       <svg
         ref={this.svgRef}
         width="700"
         height="500"
-        onMouseDown={this.onMouseDown}
-        onMouseMove={this.onMouseMove}
-        onMouseUp={this.onMouseUp}
+        // onMouseDown={this.onMouseDown}
+        // onMouseMove={this.onMouseMove}
+        // onMouseUp={this.onMouseUp}
+        // onTouchStart={this.onTouchStart}
+        // onTouchMove={this.onTouchMove}
+        // onTouchEnd={this.onTouchEnd}
+        onPointerDown={this.onPointerDown}
+        onPointerMove={this.onPointerMove}
+        onPointerUp={this.onPointerUp}
       >
         {this.props.annotations.map((annotation, aIdx) => {
           return annotation.lines.map((l, lIdx) => {
