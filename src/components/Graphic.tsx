@@ -18,7 +18,6 @@ interface IProps {
 
 class Graphic extends Component<IProps> {
   svgRef: any;
-  svgDelta: Point = { x: 0, y: 0 };
   state: State = {
     newLine: null
   };
@@ -27,13 +26,6 @@ class Graphic extends Component<IProps> {
     super(props);
     this.svgRef = React.createRef();
     // this.state.lines.push({ x1: 40, y1: 70, x2: 150, y2: 200 });
-  }
-
-  componentDidMount() {
-    if (this.svgRef) {
-      const rect = this.svgRef.current.getBoundingClientRect();
-      this.svgDelta = { x: rect.x, y: rect.y };
-    }
   }
 
   onTouchStart = (ev: React.TouchEvent) => {
@@ -101,9 +93,10 @@ class Graphic extends Component<IProps> {
   };
 
   getSvgPoint(clientX: number, clientY: number): Point {
+    const rect = this.svgRef.current.getBoundingClientRect();
     return {
-      x: clientX - this.svgDelta.x,
-      y: clientY - this.svgDelta.y
+      x: clientX - rect.x,
+      y: clientY - rect.y
     };
   }
 
